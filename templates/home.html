@@ -1,0 +1,80 @@
+{{template "base" .}}
+
+{{define "content"}}
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-badge">Static Analysis for Go</div>
+        <h1>Prove your Go code<br>is <span class="text-safe">safe</span>.</h1>
+        <p class="hero-sub">
+            A static analysis tool that uses abstract interpretation to
+            <strong>mathematically prove</strong> properties about your code &mdash;
+            or tell you exactly where it can't.
+        </p>
+        <div class="hero-actions">
+            <a href="/getting-started" class="btn btn-primary">Get Started</a>
+            <a href="https://github.com/ahmedaabouzied/goprove" class="btn btn-outline" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub</a>
+        </div>
+
+        <div class="hero-code">
+<pre><span class="term-prompt">$</span> goprove ./...
+
+ <span class="term-bug">Error</span>   billing/charge.go:47   nil dereference of <span class="term-hl">db</span> — value is always nil
+ <span class="term-warn">Warning</span> handler/home.go:89    possible nil dereference of <span class="term-hl">config</span>
+
+ Summary: <span class="term-bug">1 bugs</span>, <span class="term-warn">1 warnings</span>.</pre>
+        </div>
+    </div>
+</section>
+
+<section class="detects">
+    <div class="detects-inner">
+        <h2>What it detects</h2>
+        <div class="detect-grid">
+            <div class="detect-card">
+                <h3>Nil Pointer Dereference</h3>
+                <p>Tracks nil state through your entire program. Nil checks, early returns, field reloads, interface calls &mdash; all proven.</p>
+                <a href="/nil-analysis">Learn more &rarr;</a>
+            </div>
+            <div class="detect-card">
+                <h3>Division by Zero</h3>
+                <p>Integer interval analysis proves whether a denominator can be zero. Guards are tracked across branches.</p>
+                <a href="/division-by-zero">Learn more &rarr;</a>
+            </div>
+            <div class="detect-card">
+                <h3>Integer Overflow</h3>
+                <p>Arithmetic and narrowing conversion overflow detection. If the value fits, it's proven. If it doesn't, you'll know.</p>
+                <a href="/integer-overflow">Learn more &rarr;</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="install-section">
+    <div class="install-inner">
+        <h2>Install in seconds</h2>
+        <div class="install-block">
+            <div class="install-option">
+                <div class="code-block"><code>go install github.com/ahmedaabouzied/goprove/cmd/goprove@latest</code></div>
+            </div>
+        </div>
+        <a href="/getting-started" class="btn btn-primary">Full setup guide &rarr;</a>
+    </div>
+</section>
+
+<section class="philosophy">
+    <div class="philosophy-inner">
+        <h2>Why proving matters</h2>
+        <p>
+            Formal verification was reserved for flight controllers and nuclear reactors.
+            But your Go backend processes payments, routes vehicles, and serves millions of requests.
+            A nil panic doesn't kill anyone &mdash; but it loses money, corrupts data, and pages engineers at 3am.
+        </p>
+        <p>
+            The barrier wasn't that backend code didn't need proving &mdash; it was that proving tools
+            required annotations, specifications, or PhDs. Abstract interpretation removes that barrier.
+            <strong>Zero annotations. Just run it.</strong>
+        </p>
+        <a href="/how-it-works" class="btn btn-outline">How it works &rarr;</a>
+    </div>
+</section>
+{{end}}

@@ -1,0 +1,81 @@
+{{template "base" .}}
+
+{{define "title"}}{{.Page.Title}} — GoProve{{end}}
+{{define "description"}}{{.Page.Description}}{{end}}
+{{define "canonical"}}https://goprove.dev/{{.Page.Slug}}{{end}}
+{{define "og_title"}}{{.Page.Title}} — GoProve{{end}}
+{{define "og_description"}}{{.Page.Description}}{{end}}
+{{define "og_url"}}https://goprove.dev/{{.Page.Slug}}{{end}}
+{{define "tw_title"}}{{.Page.Title}} — GoProve{{end}}
+{{define "tw_description"}}{{.Page.Description}}{{end}}
+
+{{define "jsonld"}}
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "{{.Page.Title}}",
+    "description": "{{.Page.Description}}",
+    "url": "https://goprove.dev/{{.Page.Slug}}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "GoProve"
+    }
+}
+{{end}}
+
+{{define "content"}}
+<div class="doc-layout">
+    <aside class="doc-sidebar" role="navigation" aria-label="Documentation">
+        <div class="sidebar-inner">
+            <h4>Documentation</h4>
+            <ul>
+                {{range .Pages}}
+                <li>
+                    <a href="/{{.Slug}}" {{if eq .Slug $.Page.Slug}}class="active" aria-current="page"{{end}}>
+                        {{.Title}}
+                    </a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
+    </aside>
+
+    <article class="doc-content" role="main">
+        <header class="doc-header">
+            <h1>{{.Page.Title}}</h1>
+            {{if .Page.Description}}<p class="doc-description">{{.Page.Description}}</p>{{end}}
+        </header>
+
+        <div class="prose">
+            {{.Page.Content}}
+        </div>
+
+        {{if .NextPage}}
+        <nav class="doc-next" aria-label="Next page">
+            <a href="/{{.NextPage.Slug}}">
+                <div>
+                    <div class="doc-next-label">Next</div>
+                    <div class="doc-next-title">{{.NextPage.Title}}</div>
+                </div>
+                <span class="doc-next-arrow">&rarr;</span>
+            </a>
+        </nav>
+        {{end}}
+    </article>
+
+    <aside class="doc-toc" role="navigation" aria-label="Table of contents">
+        {{if .Page.Headings}}
+        <div class="toc-inner">
+            <h4>On this page</h4>
+            <ul>
+                {{range .Page.Headings}}
+                <li class="toc-h{{.Level}}">
+                    <a href="#{{.ID}}">{{.Text}}</a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
+        {{end}}
+    </aside>
+</div>
+{{end}}
