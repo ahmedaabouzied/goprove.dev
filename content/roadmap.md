@@ -7,7 +7,7 @@ order: 9
 
 ## Current status
 
-GoProve is in active development. Phases 1 and 2 are complete. Phase 2.5 (false positive reduction) is in progress.
+GoProve is in active development. Phases 1, 2, and 2.5 are complete. The latest release is **v0.3.0** (March 31, 2026). See the [release notes](/release-v0.3.0) for details.
 
 ## Phase overview
 
@@ -15,7 +15,7 @@ GoProve is in active development. Phases 1 and 2 are complete. Phase 2.5 (false 
 |---|---|---|
 | **1** | Integer interval analysis (div-by-zero, overflow) | **Done** |
 | **2** | Nil pointer analysis (address model, interprocedural, whole-program params) | **Done** |
-| **2.5** | False positive reduction | **In progress** |
+| **2.5** | False positive reduction (v0.3.0) | **Done** |
 | **3** | Slice bounds analysis | Planned |
 | **4** | Whole-program integer range tracking | Planned |
 | **5** | GC pressure analysis | Planned |
@@ -43,14 +43,17 @@ Tracks nil state for every pointer using a lattice. Features:
 - Map ok pattern, type assertion ok pattern
 - Interface method call nil detection
 
-## Phase 2.5: False positive reduction (In progress)
+## Phase 2.5: False positive reduction (Done — v0.3.0)
 
-Seed analysis across 20 open-source Go modules identified areas for improvement. Current work focuses on reducing false positives through better handling of:
+Seed analysis across 20 open-source Go modules identified areas for improvement. v0.3.0 addressed all major sources of false positives:
 
-- callsite collection and Extract instruction handling
-- TypeAssert and Lookup instruction patterns
-- Standard library return value guarantees
-- Type switch narrowing
+- Global variable nil state tracking via fixed-point iteration
+- Address-taken local variable tracking and nested field resolution
+- Type switch narrowing and comma-ok type assertion handling
+- Map lookup nil checks
+- Function pointer and closure tracking
+- CHA call graph resolution for more precise virtual call analysis
+- Stdlib nil analysis cache and per-project summary caching for performance
 
 ## Phase 3: Slice bounds analysis (Planned)
 
