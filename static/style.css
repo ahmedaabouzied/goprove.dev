@@ -145,8 +145,11 @@ a:hover {
     border: none;
     cursor: pointer;
     flex-direction: column;
+    justify-content: center;
     gap: 5px;
-    padding: 4px;
+    padding: 8px 4px;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .nav-mobile-toggle span {
@@ -155,6 +158,20 @@ a:hover {
     background: var(--text-secondary);
     display: block;
     border-radius: 1px;
+    transition: transform 0.2s, opacity 0.2s;
+    transform-origin: center;
+}
+
+.nav-mobile-toggle.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-mobile-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-mobile-toggle.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 /* === Buttons === */
@@ -430,12 +447,14 @@ a:hover {
     padding: 1rem 1.25rem;
     text-align: left;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .code-block code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     color: var(--cyan);
+    white-space: nowrap;
 }
 
 /* === Philosophy === */
@@ -532,6 +551,7 @@ a:hover {
     padding: 3rem 3rem 6rem;
     max-width: var(--content-max);
     width: 100%;
+    min-width: 0;
     margin: 0 auto;
 }
 
@@ -597,6 +617,14 @@ a:hover {
 }
 
 /* === Prose (markdown content) === */
+.prose p,
+.prose li,
+.prose h2,
+.prose h3,
+.prose blockquote {
+    overflow-wrap: break-word;
+}
+
 .prose h2 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -664,10 +692,12 @@ a:hover {
 }
 
 .prose table {
-    width: 100%;
+    display: block;
     border-collapse: collapse;
     margin-bottom: 1.5rem;
     font-size: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .prose th {
@@ -825,7 +855,7 @@ a:hover {
 /* === Responsive === */
 @media (max-width: 1024px) {
     .doc-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .doc-sidebar {
@@ -833,13 +863,17 @@ a:hover {
         height: auto;
         border-right: none;
         border-bottom: 1px solid var(--border);
-        padding: 1rem 0;
+        padding: 1.25rem 0;
     }
 
     .sidebar-inner ul {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.25rem;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .sidebar-inner li {
+        margin-bottom: 0;
     }
 
     .doc-toc {
@@ -865,6 +899,12 @@ a:hover {
         align-items: center;
     }
 
+    .hero-actions .btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+    }
+
     .color-cards {
         grid-template-columns: 1fr;
     }
@@ -887,21 +927,67 @@ a:hover {
         background: var(--bg);
         border-bottom: 1px solid var(--border);
         flex-direction: column;
-        padding: 1rem 2rem;
-        gap: 0.5rem;
+        padding: 0.5rem 1rem 1rem;
+        gap: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .nav-links.open {
         display: flex;
     }
 
+    .nav-links a {
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
     .nav-mobile-toggle {
         display: flex;
+    }
+
+    .detect-card a {
+        display: inline-block;
+        padding: 0.4rem 0;
+        min-height: 44px;
+        line-height: 44px;
+    }
+
+    .doc-content {
+        padding: 1.5rem 1rem 3rem;
     }
 }
 
 @media (max-width: 480px) {
+    .hero {
+        padding: 5rem 1rem 2.5rem;
+    }
+
+    .hero-sub {
+        font-size: 14px;
+    }
+
+    .hero-code pre {
+        font-size: 11px;
+        padding: 1rem;
+    }
+
+    .features,
+    .detects,
+    .install-section,
+    .philosophy {
+        padding: 3rem 1rem;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
+    }
+
+    .doc-content {
+        padding: 1.25rem 1rem 2.5rem;
     }
 }
