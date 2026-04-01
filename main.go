@@ -22,6 +22,9 @@ import (
 	"go.abhg.dev/goldmark/frontmatter"
 )
 
+// Version is set at build time via -ldflags "-X main.Version=<commit>".
+var Version = "dev"
+
 //go:embed templates/*
 var templateFS embed.FS
 
@@ -75,16 +78,22 @@ type Sitemap struct {
 
 // Site holds all loaded pages and templates.
 type Site struct {
-	pages    []*Page
-	pageMap  map[string]*Page
-	homeTmpl *template.Template
-	docTmpl  *template.Template
-	md       goldmark.Markdown
-	baseURL  string
+	pages     []*Page
+	pageMap   map[string]*Page
+	homeTmpl  *template.Template
+	docTmpl   *template.Template
+	md        goldmark.Markdown
+	baseURL   string
 	buildTime string
+	version   string
 }
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "version" {
+		fmt.Println(Version)
+		return
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -115,7 +124,7 @@ func main() {
 	// Home
 	mux.HandleFunc("/", site.handleHome)
 
-	log.Printf("goprove.dev listening on :%s", port)
+	log.Printf("goprove.dev version=%s listening on :%s", Version, port)
 	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
 
@@ -124,6 +133,7 @@ func newSite(baseURL string) (*Site, error) {
 		pageMap:   make(map[string]*Page),
 		baseURL:   baseURL,
 		buildTime: time.Now().Format("2006-01-02"),
+		version:   Version,
 	}
 
 	// Set up goldmark with syntax highlighting and frontmatter
@@ -311,13 +321,15 @@ func stripHTML(s string) string {
 }
 
 type homeData struct {
-	Pages []*Page
+	Pages   []*Page
+	Version string
 }
 
 type docData struct {
 	Page     *Page
 	Pages    []*Page
 	NextPage *Page
+	Version  string
 }
 
 func (s *Site) handleHome(w http.ResponseWriter, r *http.Request) {
@@ -327,7 +339,7 @@ func (s *Site) handleHome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var buf bytes.Buffer
-	err := s.homeTmpl.ExecuteTemplate(&buf, "base", homeData{Pages: s.pages})
+	err := s.homeTmpl.ExecuteTemplate(&buf, "base", homeData{Pages: s.pages, Version: s.version})
 	if err != nil {
 		log.Printf("error rendering home: %v", err)
 		http.Error(w, "Internal Server Error", 500)
@@ -349,7 +361,7 @@ func (s *Site) handleDoc(page *Page) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var buf bytes.Buffer
-		err := s.docTmpl.ExecuteTemplate(&buf, "base", docData{Page: page, Pages: s.pages, NextPage: nextPage})
+		err := s.docTmpl.ExecuteTemplate(&buf, "base", docData{Page: page, Pages: s.pages, NextPage: nextPage, Version: s.version})
 		if err != nil {
 			log.Printf("error rendering %s: %v", page.Slug, err)
 			http.Error(w, "Internal Server Error", 500)

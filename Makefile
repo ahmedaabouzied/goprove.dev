@@ -1,17 +1,19 @@
 BINARY     = goprove-site
 REMOTE     ?= aabouzied@praha.aabouzied.com
 REMOTE_DIR ?= /home/aabouzied/goprove.dev
+VERSION    := $(shell git rev-parse --short HEAD)
+LDFLAGS    := -ldflags "-X main.Version=$(VERSION)"
 
 .PHONY: build build-linux build-mac run deploy
 
 build:
-	go build -o $(BINARY) .
+	go build $(LDFLAGS) -o $(BINARY) .
 
 build-linux:
-	GOOS=linux GOARCH=amd64 go build -o $(BINARY) .
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BINARY) .
 
 build-mac:
-	go build -o $(BINARY) .
+	go build $(LDFLAGS) -o $(BINARY) .
 
 run: build
 	./$(BINARY)
