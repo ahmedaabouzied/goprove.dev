@@ -118,11 +118,11 @@ func main() {
 	// Doc pages
 	for _, p := range site.pages {
 		page := p
-		mux.HandleFunc("/"+page.Slug, site.handleDoc(page))
+		mux.HandleFunc("/"+page.Slug, site.withEarlyHints(site.handleDoc(page)))
 	}
 
 	// Home
-	mux.HandleFunc("/", site.handleHome)
+	mux.HandleFunc("/", site.withEarlyHints(site.handleHome))
 
 	log.Printf("goprove.dev version=%s listening on :%s", Version, port)
 	log.Fatal(http.ListenAndServe(":"+port, mux))
@@ -405,6 +405,21 @@ func staticHandler(next http.Handler) http.Handler {
 		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		next.ServeHTTP(w, r)
 	})
+}
+
+// withEarlyHints sends a 103 Early Hints response with preload links for the
+// critical CSS and font before the full 200 response. Nginx 1.29+ will forward
+// the 103 to the browser; older proxies drop it but the Link headers still
+// appear in the 200 and trigger browser prefetch.
+func (s *Site) withEarlyHints(next http.HandlerFunc) http.HandlerFunc {
+	cssLink := `</static/style.min.css?v=` + s.version + `>; rel=preload; as=style`
+	fontLink := `</static/fonts/jetbrains-mono-normal-latin.woff2>; rel=preload; as=font; crossorigin`
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Link", cssLink)
+		w.Header().Add("Link", fontLink)
+		w.WriteHeader(http.StatusEarlyHints)
+		next(w, r)
+	}
 }
 
 func (s *Site) handleLLMsTxt(w http.ResponseWriter, r *http.Request) {
