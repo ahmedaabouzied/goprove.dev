@@ -106,8 +106,8 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Static files
-	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
+	// Static files — long cache lifetime is safe because URLs are cache-busted with ?v=<version>
+	mux.Handle("/static/", staticHandler(http.FileServer(http.FS(staticFS))))
 
 	// Auto-generated SEO/LLM files
 	mux.HandleFunc("/sitemap.xml", site.handleSitemap)
@@ -397,11 +397,14 @@ func (s *Site) handleSitemap(w http.ResponseWriter, r *http.Request) {
 
 func (s *Site) handleRobots(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprintf(w, `User-agent: *
-Allow: /
+	fmt.Fprintf(w, "User-agent: *\nDisallow:\n\nSitemap: %s/sitemap.xml\n", s.baseURL)
+}
 
-Sitemap: %s/sitemap.xml
-`, s.baseURL)
+func staticHandler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (s *Site) handleLLMsTxt(w http.ResponseWriter, r *http.Request) {
