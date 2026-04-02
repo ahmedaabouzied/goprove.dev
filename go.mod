@@ -12,5 +12,7 @@ require (
 	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/alecthomas/chroma/v2 v2.2.0 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
+	github.com/tdewolff/minify/v2 v2.24.11 // indirect
+	github.com/tdewolff/parse/v2 v2.8.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
