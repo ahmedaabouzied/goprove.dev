@@ -397,7 +397,7 @@ func (s *Site) handleSitemap(w http.ResponseWriter, r *http.Request) {
 
 func (s *Site) handleRobots(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprintf(w, "User-agent: *\nDisallow:\n\nSitemap: %s/sitemap.xml\n", s.baseURL)
+	fmt.Fprintf(w, "User-agent: *\nDisallow:\n\nSitemap: %s/sitemap.xml\n\nContent-Signal: search=yes,ai-train=no\n", s.baseURL)
 }
 
 func staticHandler(next http.Handler) http.Handler {
