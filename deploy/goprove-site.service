@@ -11,6 +11,8 @@ ExecStart=/opt/goprove.dev/goprove-site
 Restart=always
 RestartSec=3
 Environment=PORT=18091
+Environment=PUSHGATEWAY=http://rosetta:19091
+Environment=GEOIP_DB=/opt/goprove.dev/GeoLite2-City.mmdb
 
 [Install]
 WantedBy=multi-user.target

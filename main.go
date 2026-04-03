@@ -104,6 +104,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Metrics setup — configure via PUSHGATEWAY and GEOIP_DB env vars
+	pushGW := os.Getenv("PUSHGATEWAY")
+	geoDBPath := getEnvOrDefault("GEOIP_DB", "/opt/goprove.dev/GeoLite2-City.mmdb")
+	metrics := newMetrics(Version, geoDBPath)
+	defer metrics.Close()
+
+	if pushGW != "" {
+		go metrics.StartPusher(pushGW)
+		log.Printf("Metrics pushing to %s every 15s", pushGW)
+	} else {
+		log.Println("PUSHGATEWAY not set — metrics disabled")
+	}
+
 	mux := http.NewServeMux()
 
 	// Static files — long cache lifetime is safe because URLs are cache-busted with ?v=<version>
@@ -125,7 +138,7 @@ func main() {
 	mux.HandleFunc("/", site.withEarlyHints(site.handleHome))
 
 	log.Printf("goprove.dev version=%s listening on :%s", Version, port)
-	log.Fatal(http.ListenAndServe(":"+port, mux))
+	log.Fatal(http.ListenAndServe(":"+port, metrics.Middleware(mux)))
 }
 
 func newSite(baseURL string) (*Site, error) {
