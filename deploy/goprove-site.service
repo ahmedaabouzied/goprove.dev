@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=goprove
-Group=goprove
+User=aabouzied
+Group=aabouzied
 WorkingDirectory=/opt/goprove.dev
 ExecStart=/opt/goprove.dev/goprove-site
 Restart=always
